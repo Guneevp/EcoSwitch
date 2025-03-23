@@ -3,27 +3,73 @@ from flask import Flask, request, jsonify
 import requests
 from pprint import pprint
 
+from google import genai
+
+client = genai.Client(api_key="AIzaSyAWaizpDISZdr7r1ZkX0BYoui639JvCMLs")
+def prompt_ai(prompt: str):
+    return client.models.generate_content(
+        model="gemini-2.0-flash", contents=prompt
+    )
 
 app = Flask(__name__)
 
-def _gemini_simplifier(long_title: str) -> str:
+def _gemini_simplifier(long_title: str):
     """ Take a long title from an amazon product
     page and shorten in order to make query searches
     for sustainable alternatives.
-    """
+    >>> _gemini_simplifier("very long title").text
 
-def _gemini_sustainability_score(data: dict) -> list[dict]:
+    """
+    return prompt_ai(f'Hey can you shorten this amazon product title? I\'m '
+              f'trying to query amazon and I need this title without all the extra fluff: "{long_title}"')
+
+def _gemini_sustainability_score(data: dict) -> dict:
     """ Take an input data set of amazon search data
     and feed each product into gemini, and return a list
     of products that have met the sustainability score
     given by gemini
     """
-    min_score  = 2 # Set this up based on user preferences?
+    scores = []
+    for product in data["results"][0]["content"]["results"]['organic']:
+        product_id = product['asin']
 
+        to_api = {
+            'source': 'amazon_product',
+            'query': product_id,
+            'parse': True
+        }
+        pr_info = requests.request(
+            'POST',
+            url='https://realtime.oxylabs.io/v1/queries',
+            auth=('Sustainable', 'IwhzpW5gsq9+'),
+            json=to_api,
+        ).json()
+
+        title = pr_info['title']
+        description = pr_info["description"]
+
+        prompt = f'''
+     Evaluate the sustainability of this product based on the following factors:
+
+Ingredients (30%): Organic, natural, non-toxic?
+Packaging (25%): Recyclable, plastic-free, biodegradable?
+Environmental Impact (20%): Carbon footprint, waste generation?
+Certifications (15%): Fair Trade, FSC, cruelty-free?
+Company Practices (10%): Ethical sourcing, sustainability initiatives?
+
+    Here is the product name:"{title}"
+    
+    and here is the description:{description}
+
+    Can you give the score to be the last 3 digits of your response?
+    '''
+        scores.append(prompt_ai(prompt).text[-3:])
     # Gemini calls above
-    for pr_feedback in ___:
-        pass
+    index = scores.index(max(scores))
 
+
+
+    return data["results"][0]["content"]["results"]['organic'][index]
 
 @app.route('/process', methods=['POST'])
 def get_product_info():
@@ -33,7 +79,7 @@ def get_product_info():
 
     to_api = {
         'source':'amazon_product',
-        'query':'B07FZ8S74R',
+        'query':pr_id,
         'parse':True
     }
     pr_info = requests.request(
@@ -59,7 +105,9 @@ def get_product_info():
         json= sustain_pr_payload,
     ).json()
 
-    return _gemini_sustainability_score(possible_items)
+    product =  _gemini_sustainability_score(possible_items)
+
+    return product['title']
 
 
 
