@@ -1,1 +1,1 @@
-# Sustainable-Shopper
+# EcoSwitch
