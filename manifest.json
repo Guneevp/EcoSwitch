@@ -1,22 +1,11 @@
 {
     "manifest_version": 3,
-    "name": "Amazon URL Tracker",
+    "name": "EcoSwitch",
     "version": "1.0",
-    "description": "Tracks the URL when the user is browsing Amazon websites.",
-    "permissions": ["tabs"],
-    "host_permissions": [
-      "https://www.amazon.com/*",
-      "https://www.amazon.*/*"
-    ],
-    "background": {
-      "service_worker": "background.js"
-    },
+    "description": "Your eco-friendly shopping assistant.",
+    "permissions": ["activeTab", "scripting"],
     "action": {
       "default_popup": "popup.html",
-      "default_icon": {
-        "16": "icons/icon16.png",
-        "48": "icons/icon48.png",
-        "128": "icons/icon.png"
-      }
+      "default_icon": "icon.png"
     }
   }
