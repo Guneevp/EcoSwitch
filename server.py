@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify
+
 import requests
 from pprint import pprint
 
@@ -17,6 +18,12 @@ def _gemini_sustainability_score(data: dict) -> list[dict]:
     of products that have met the sustainability score
     given by gemini
     """
+    min_score  = 2 # Set this up based on user preferences?
+
+    # Gemini calls above
+    for pr_feedback in ___:
+        pass
+
 
 @app.route('/process', methods=['POST'])
 def get_product_info():
@@ -34,9 +41,9 @@ def get_product_info():
         url = 'https://realtime.oxylabs.io/v1/queries',
         auth = ('Sustainable', 'IwhzpW5gsq9+'),
         json= to_api,
-    )
+    ).json()
 
-    name_to_find = Gemini_simplifier(pr_info["title"]) # figure out how to find title
+    name_to_find = _gemini_simplifier(pr_info["title"]) # figure out how to find title
 
     sustain_pr_payload = {
         'source':'amazon_search',
@@ -50,7 +57,7 @@ def get_product_info():
         url = 'https://realtime.oxylabs.io/v1/queries',
         auth = ('Sustainable', 'IwhzpW5gsq9+'),
         json= sustain_pr_payload,
-    )
+    ).json()
 
     return _gemini_sustainability_score(possible_items)
 
