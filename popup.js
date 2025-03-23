@@ -5,7 +5,7 @@ document.getElementById("getUrlButton").addEventListener("click", async () => {
   
     // Send the URL to the backend
     try {
-      const response = await fetch("http://127.0.0.1:5000/get-product-info", {
+      const response = await fetch("http://127.0.0.1:5000/get_product_info", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
