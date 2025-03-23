@@ -105,9 +105,10 @@ def get_product_info():
         json= sustain_pr_payload,
     ).json()
 
-    product =  _gemini_sustainability_score(possible_items)
+    name = product =  _gemini_sustainability_score(possible_items)
 
-    return product['title']
+
+    return {"productName": name}
 
 
 
